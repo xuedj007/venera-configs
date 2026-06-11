@@ -13,7 +13,7 @@ class ManWaBa extends ComicSource {
   minAppVersion = "1.4.0";
 
   // update url
-  url = "https://cdn.jsdelivr.net/gh/venera-app/venera-configs@main/manwaba.js";
+  url = "https://cdn.jsdelivr.net/gh/xuedj007/venera-configs@main/manwaba.js";
 
   //api = "https://www.manwaba.com/api"; //重定向之前的地址无法使用分类
   api = "https://www.mhtmh.org/api";
@@ -345,7 +345,7 @@ class ManWaBa extends ComicSource {
       let data = await this.fetchJson(url, { payload: undefined }).then(
         (res) => res.data
       );
-      this.logger.warn(`loadInfo: ${data}`);
+      this.logger.info(`loadInfo: ${data.id}`);
       let chapterId = data.id;
       let chapterApi = `${this.api}/comic/chapter`;
       let params = {
@@ -391,8 +391,7 @@ class ManWaBa extends ComicSource {
       let imgApi = `${this.api}/comic/image/${epId}`;
       let params = {
         page: 1,
-        pageSize: 1,
-        imageSource: "https://tu.mhttu.cc",
+        page_size: 1,
       };
       let pageNum = await this.fetchJson(imgApi, {
         params,
@@ -403,7 +402,13 @@ class ManWaBa extends ComicSource {
           page_size: pageNum,
         },
       }).then((res) => res.data.images);
-      let images = imageRes.map((item) => item.url);
+      let images = imageRes.map((item) => {
+        let url = item.url;
+        if (url.includes("tu.mhttu.cc")) {
+          url = url.replace("tu.mhttu.cc", "tu.mwzu.cc");
+        }
+        return url;
+      });
       return {
         images,
       };
